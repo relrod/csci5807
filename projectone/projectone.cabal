@@ -1,0 +1,32 @@
+name:                projectone
+version:             0.1.0.0
+-- synopsis:
+-- description:
+license:             BSD3
+license-file:        LICENSE
+author:              Ricky Elrod
+maintainer:          ricky@elrod.me
+-- copyright:
+-- category:
+build-type:          Simple
+-- extra-source-files:
+cabal-version:       >=1.10
+
+library
+  exposed-modules:     ProjectOne.Extraction.CPlusPlus
+  build-depends:       base >= 4 && < 5
+                     , parsers >= 0.12 && < 0.13
+                     , time >= 1.4 && < 1.6
+                     , trifecta >= 1.2 && < 1.6
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+
+executable projectone
+  main-is:             Main.hs
+  -- other-modules:
+  -- other-extensions:
+  build-depends:       base >= 4 && < 5
+                     , parsers >= 0.12 && < 0.13
+                     , trifecta >= 1.2 && < 1.6
+  hs-source-dirs:      src
+  default-language:    Haskell2010
