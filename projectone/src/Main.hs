@@ -21,6 +21,8 @@ import Control.Monad
 import System.Environment (getArgs, getProgName)
 import Text.Parser.Char
 
+import ProjectOne.Extraction.CPlusPlus
+
 -- | This defines a data type for representing the various regex rules.
 -- Each constructor represents a rule. We derive an 'Eq' instance so that
 -- Haskell can automatically compare two 'Regex' values without us having to
