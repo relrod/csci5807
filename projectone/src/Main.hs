@@ -19,40 +19,10 @@ module Main where
 
 import Control.Monad
 import System.Environment (getArgs, getProgName)
-import Text.Parser.Char
 
 import ProjectOne.Extraction.CPlusPlus
-
--- | This defines a data type for representing the various regex rules.
--- Each constructor represents a rule. We derive an 'Eq' instance so that
--- Haskell can automatically compare two 'Regex' values without us having to
--- write a (laborious) Eq instance ourselves which pattern-matches on each
--- constructor and compares its parameters.
-data RegexRule = Epsilon
-               | Literal Char
-               | Or RegexRule RegexRule
-               | Then RegexRule RegexRule
-               | Star RegexRule
-               deriving (Eq)
-
--- | We don't derive Show above, because we can do something even cooler.
-instance Show RegexRule where
-  show Epsilon = "ε"
-  show (Literal c) = [c]
-  show (Or a b) = "(" ++ show a ++ "|" ++ show b ++ ")"
-  show (Then a b) = "(" ++ show a ++ show b ++ ")"
-  show (Star a) = "(" ++ show a ++ ")*"
-
--- | We use the @parsers@ abstraction library atop the @trifecta@ parser
--- combinator library but __only__ for parsing input lines. Notably,
--- page 3 of the project specification says to not touch the regex with any
--- any library, so we make a point here of only doing sanity checks on it and
--- not actually treating it as a regex in any manner. The sanity checks we do
--- are as follows:
---
---    * (None yet)
-parseSpecLine :: (Monad m, CharParsing m) => m ()
-parseSpecLine = error ""
+import ProjectOne.Input.Parser
+import ProjectOne.RegexRule
 
 main :: IO ()
 main = do
