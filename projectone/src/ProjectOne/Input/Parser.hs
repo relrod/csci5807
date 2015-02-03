@@ -11,10 +11,25 @@
 -- manipulate internally.
 ----------------------------------------------------------------------------
 module ProjectOne.Input.Parser (
-  parseSpecLine
+  SpecLine (..)
+, parseSpecLine
 ) where
 
+import qualified Data.Set as S
 import Text.Parser.Char
+import Text.Parser.Combinators
+
+data SpecLine = Class { className :: String
+                      , classSet  :: S.Set Char
+                      }
+              | Token { tokenName  :: String
+                      , tokenRegex :: String
+                        -- ^ By specification, we cannot do anything else here.
+                      }
+              | Ignore { ignoreRegex :: String
+                        -- ^ By specification, we cannot do anything else here.
+                       }
+              deriving (Eq, Ord, Show)
 
 -- | We use the @parsers@ abstraction library atop the @trifecta@ parser
 -- combinator library but __only__ for parsing input lines. Notably,
@@ -24,5 +39,30 @@ import Text.Parser.Char
 -- are as follows:
 --
 --    * (None yet)
-parseSpecLine :: (Monad m, CharParsing m) => m ()
-parseSpecLine = error ""
+parseSpecLine :: (Monad m, CharParsing m) => m SpecLine
+parseSpecLine = do
+  choice [classDecl, tokenDecl, ignoreDecl]
+  where
+    classDecl = do
+      _ <- string "class"
+      _ <- spaces
+      -- TODO: Check to ensure this is a valid C++ identifier.
+      identifier <- manyTill anyChar (try spaces)
+      _ <- char '['
+      setMembers <- manyTill anyChar (try (char ']'))
+      _ <- newline
+      return $ Class identifier (S.fromList setMembers)
+
+    tokenDecl = do
+      _ <- string "token"
+      _ <- spaces
+      -- TODO: Check to ensure this is a valid C++ identifier.
+      identifier <- manyTill anyChar (try spaces)
+      regex <- manyTill anyChar (try newline)
+      return $ Token identifier regex
+
+    ignoreDecl = do
+      _ <- string "ignore"
+      _ <- spaces
+      regex <- manyTill anyChar (try newline)
+      return $ Ignore regex
