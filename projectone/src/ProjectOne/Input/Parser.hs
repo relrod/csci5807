@@ -13,6 +13,7 @@
 module ProjectOne.Input.Parser (
   SpecLine (..)
 , parseSpecLine
+, specLines
 ) where
 
 import qualified Data.Set as S
@@ -66,3 +67,6 @@ parseSpecLine = do
       _ <- spaces
       regex <- manyTill anyChar (try newline)
       return $ Ignore regex
+
+specLines :: (Monad m, CharParsing m) => m [SpecLine]
+specLines = manyTill parseSpecLine (try eof)

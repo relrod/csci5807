@@ -1,0 +1,2 @@
+class footest [abcdefg]
+regex another a+

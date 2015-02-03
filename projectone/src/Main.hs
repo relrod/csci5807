@@ -19,6 +19,7 @@ module Main where
 
 import Control.Monad
 import System.Environment (getArgs, getProgName)
+import Text.Trifecta
 
 import ProjectOne.Extraction.CPlusPlus
 import ProjectOne.Input.Parser
@@ -30,3 +31,8 @@ main = do
   progname <- getProgName
   when (length arguments /= 2) $
     error $ "Usage: " ++ progname ++ " <input file> <output prefix>"
+  let (inFile:outFiles:_) = arguments
+  inputLines <- parseFromFile specLines inFile
+  case inputLines of
+   Just lines' -> print lines'
+   Nothing     -> error "Invalid file format given."
