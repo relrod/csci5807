@@ -46,9 +46,10 @@ parseSpecLine = do
   where
     classDecl = do
       _ <- string "class"
-      _ <- spaces
+      _ <- some space
       -- TODO: Check to ensure this is a valid C++ identifier.
-      identifier <- manyTill anyChar (try spaces)
+      identifier <- many alphaNum
+      _ <- some space
       _ <- char '['
       setMembers <- manyTill anyChar (try (char ']'))
       _ <- newline
@@ -56,15 +57,15 @@ parseSpecLine = do
 
     tokenDecl = do
       _ <- string "token"
-      _ <- spaces
+      _ <- some space
       -- TODO: Check to ensure this is a valid C++ identifier.
-      identifier <- manyTill anyChar (try spaces)
+      identifier <- manyTill anyChar (try (some space))
       regex <- manyTill anyChar (try newline)
       return $ Token identifier regex
 
     ignoreDecl = do
       _ <- string "ignore"
-      _ <- spaces
+      _ <- some space
       regex <- manyTill anyChar (try newline)
       return $ Ignore regex
 
