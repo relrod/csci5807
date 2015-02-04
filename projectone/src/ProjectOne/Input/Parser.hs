@@ -48,8 +48,7 @@ parseSpecLine = do
       _ <- string "class"
       _ <- some space
       -- TODO: Check to ensure this is a valid C++ identifier.
-      identifier <- many alphaNum
-      _ <- some space
+      identifier <- manyTill anyChar (try (some space))
       _ <- char '['
       setMembers <- manyTill anyChar (try (char ']'))
       _ <- newline
