@@ -30,6 +30,7 @@ data SpecLine = Class { className :: String
               | Ignore { ignoreRegex :: String
                         -- ^ By specification, we cannot do anything else here.
                        }
+              | Comment String
               deriving (Eq, Ord, Show)
 
 -- | We use the @parsers@ abstraction library atop the @trifecta@ parser
@@ -42,7 +43,10 @@ data SpecLine = Class { className :: String
 --    * (None yet)
 parseSpecLine :: (Monad m, CharParsing m) => m SpecLine
 parseSpecLine = do
-  choice [classDecl, tokenDecl, ignoreDecl]
+  skipMany space
+  decl <- choice [classDecl, tokenDecl, ignoreDecl, comment]
+  skipMany space
+  return decl
   where
     classDecl = do
       _ <- string "class"
@@ -67,6 +71,12 @@ parseSpecLine = do
       _ <- some space
       regex <- manyTill anyChar (try newline)
       return $ Ignore regex
+
+    comment = do
+      _ <- string "//"
+      _ <- many space
+      cmt <- manyTill anyChar (try newline)
+      return $ Comment cmt
 
 specLines :: (Monad m, CharParsing m) => m [SpecLine]
 specLines = manyTill parseSpecLine (try eof)
