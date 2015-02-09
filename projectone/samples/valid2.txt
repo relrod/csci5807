@@ -1,0 +1,17 @@
+// this is a test file
+
+token helloToken hello
+
+// classes for letters and digits
+class alpha [a-zA-Z]
+class digit [0-9]
+
+// identifiers
+token id [alpha]([alpha]|[digit])*
+
+token comment \/\/.*\n
+
+token test this\ is\ a\ test
+
+ignore (\n|\r|\f|\t)+
+
