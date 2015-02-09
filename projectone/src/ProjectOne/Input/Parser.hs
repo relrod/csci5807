@@ -21,7 +21,7 @@ import Text.Parser.Char
 import Text.Parser.Combinators
 
 data SpecLine = Class { className :: String
-                      , classSet  :: S.Set Char
+                      , classSet  :: String
                       }
               | Token { tokenName  :: String
                       , tokenRegex :: String
@@ -56,7 +56,7 @@ parseSpecLine = do
       _ <- char '['
       setMembers <- manyTill anyChar (try (char ']'))
       _ <- newline
-      return $ Class identifier (S.fromList setMembers)
+      return $ Class identifier setMembers
 
     tokenDecl = do
       _ <- string "token"
