@@ -16,12 +16,14 @@ module ProjectOne.Input.Parser (
 , specLines
 ) where
 
+import Control.Applicative
+import Control.Monad
 import qualified Data.Set as S
 import Text.Parser.Char
 import Text.Parser.Combinators
 
 data SpecLine = Class { className :: String
-                      , classSet  :: String
+                      , classSet  :: S.Set Char
                       }
               | Token { tokenName  :: String
                       , tokenRegex :: String
@@ -48,15 +50,20 @@ parseSpecLine = do
   skipMany space
   return decl
   where
+    charRange :: (Monad m, CharParsing m) => m String
+    charRange = do
+      (start, end) <- liftA2 (,) (anyChar <* char '-') anyChar
+      return [start..end]
+
     classDecl = do
       _ <- string "class"
       _ <- some space
       -- TODO: Check to ensure this is a valid C++ identifier.
       identifier <- manyTill anyChar (try (some space))
       _ <- char '['
-      setMembers <- manyTill anyChar (try (char ']'))
+      setMembers <- manyTill (choice [try charRange, return <$> anyChar]) (try (char ']'))
       _ <- newline
-      return $ Class identifier setMembers
+      return $ Class identifier (S.fromList . join $ setMembers)
 
     tokenDecl = do
       _ <- string "token"
