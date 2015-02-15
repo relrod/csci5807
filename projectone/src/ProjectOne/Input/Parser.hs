@@ -51,9 +51,7 @@ parseSpecLine = do
   return decl
   where
     charRange :: (Monad m, CharParsing m) => m String
-    charRange = do
-      (start, end) <- liftA2 (,) (anyChar <* char '-') anyChar
-      return [start..end]
+    charRange = liftA2 enumFromTo (anyChar <* char '-') anyChar
 
     classDecl = do
       _ <- string "class"
