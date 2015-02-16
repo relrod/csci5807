@@ -14,7 +14,8 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     ProjectOne.Extraction.CPlusPlus
-                     , ProjectOne.Input.Parser
+                     , ProjectOne.Input.RegexParser
+                     , ProjectOne.Input.SpecLineParser
                      , ProjectOne.NFA
   build-depends:       base >= 4 && < 5
                      , containers >= 0.4 && < 0.6

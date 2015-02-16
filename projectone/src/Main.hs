@@ -22,7 +22,7 @@ import System.Environment (getArgs, getProgName)
 import Text.Trifecta
 
 import ProjectOne.Extraction.CPlusPlus
-import ProjectOne.Input.Parser
+import ProjectOne.Input.SpecLineParser
 import ProjectOne.RegexRule
 
 main :: IO ()

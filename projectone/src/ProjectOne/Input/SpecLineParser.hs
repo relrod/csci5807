@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------
 -- |
--- Module : ProjectOne.Input.Parser
+-- Module : ProjectOne.Input.SpecLineParser
 -- Copyright : (C) 2015 Ricky Elrod
 -- License : BSD2 (see LICENSE file)
 -- Maintainer : Ricky Elrod <ricky@elrod.me>
@@ -10,7 +10,7 @@
 -- Here is where we parse the input specification into forms that we can
 -- manipulate internally.
 ----------------------------------------------------------------------------
-module ProjectOne.Input.Parser (
+module ProjectOne.Input.SpecLineParser (
   SpecLine (..)
 , parseSpecLine
 , specLines
