@@ -8,7 +8,7 @@
 -- Portability : ghc
 --
 -- Here is where we actually parse the regex. We separate this out into its own
--- module entirely to prove that we are doing the parsing work ourself.
+-- module entirely to prove that we are doing the parsing work ourselves.
 --
 -- That said, we do make use of the \'trifecta\' library here and the
 -- \'parsers\' abstraction on top of it. This is for a few reasons:
@@ -60,7 +60,7 @@ literal :: (Monad m, CharParsing m) => m RegexRule
 literal = Literal <$> (noneOf specialChars <|> (char '\\' *> anyChar))
 
 -- | Represents some optional match. Another way of saying this is @ε|α@ where
--- ε is the empty string and α is some token.
+-- ε is the empty string and α is some token .
 optional :: (Monad m, CharParsing m) => m RegexRule
 optional = Or Epsilon <$> (token <* char '?')
 
