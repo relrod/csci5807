@@ -62,7 +62,7 @@ literal = Literal <$> (noneOf specialChars <|> (char '\\' *> anyChar))
 -- | Represents some optional match. Another way of saying this is @ε|α@ where
 -- ε is the empty string and α is some token .
 optional :: (Monad m, CharParsing m) => m RegexRule
-optional = Or Epsilon <$> (token <* char '?')
+optional = Or ε <$> (token <* char '?')
 
 star :: (Monad m, CharParsing m) => m RegexRule
 star = Star <$> (token <* char '*')

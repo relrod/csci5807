@@ -12,7 +12,8 @@
 -- internally.
 ----------------------------------------------------------------------------
 module ProjectOne.RegexRule (
-  RegexRule (..)
+  RegexRule (..),
+  ε
 ) where
 
 -- | This defines a data type for representing the various regex rules.
@@ -26,6 +27,9 @@ data RegexRule = Epsilon
                | Then RegexRule RegexRule
                | Star RegexRule
                deriving (Eq)
+
+ε :: RegexRule
+ε = Epsilon
 
 -- | We don't derive Show above, because we can do something even cooler.
 -- Using this, we can roughly recover the initial regex, as parsed.
