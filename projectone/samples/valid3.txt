@@ -1,0 +1,4 @@
+class dig [0-9]
+class exp [eE]
+class pm [+-]
+token fpnum ([dig]+\.[dig]*|\.[dig]+)([exp][pm]?[dig]+)?
