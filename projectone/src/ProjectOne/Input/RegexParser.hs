@@ -35,12 +35,12 @@
 ----------------------------------------------------------------------------
 module ProjectOne.Input.RegexParser where
 
-import Control.Applicative
+import Control.Applicative hiding (optional)
 import Control.Monad
 import qualified Data.Set as S
 import ProjectOne.RegexRule
 import Text.Parser.Char
-import Text.Parser.Combinators
+import Text.Parser.Combinators hiding (optional)
 
 -- | Characters which require escaping.
 specialChars :: String
@@ -50,11 +50,23 @@ parseRegex :: (Monad m, CharParsing m) => m RegexRule
 parseRegex = do
   error ""
 
+parenthesized :: (Monad m, CharParsing m) => m a -> m a
+parenthesized a = char '(' *> a <* char ')'
+
+--bracketed :: (Monad m, CharParsing m) => m a -> m a
+--bracketed a = char '[' *> a <* char ']'
+
 -- TODO: In reality, there can be more than a literal here, but I haven't
 -- written a generalized token parser for this yet, so we specialize it for now
 -- so that other functions can check.
 token :: (Monad m, CharParsing m) => m RegexRule
 token = literal
+
+regexTerm :: (Monad m, CharParsing m) => m RegexRule
+regexTerm = try star <|> try plus <|> try optional <|> token
+
+regexTerms :: (Monad m, CharParsing m) => m RegexRule
+regexTerms = foldl1 Then <$> some regexTerm
 
 literal :: (Monad m, CharParsing m) => m RegexRule
 literal = Literal <$> (noneOf specialChars <|> (char '\\' *> anyChar))
