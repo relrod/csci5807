@@ -47,14 +47,16 @@ specialChars :: String
 specialChars = "+?*()[]\\"
 
 parseRegex :: (Monad m, CharParsing m) => m RegexRule
-parseRegex = do
-  error ""
+parseRegex = eof *> pure ε <|> regex <* eof
 
 parenthesized :: (Monad m, CharParsing m) => m a -> m a
 parenthesized a = char '(' *> a <* char ')'
 
 --bracketed :: (Monad m, CharParsing m) => m a -> m a
 --bracketed a = char '[' *> a <* char ']'
+
+regex :: (Monad m, CharParsing m) => m RegexRule
+regex = foldl1 Or <$> (regexTerms `sepBy1` char '|')
 
 -- TODO: In reality, there can be more than a literal here, but I haven't
 -- written a generalized token parser for this yet, so we specialize it for now
