@@ -42,6 +42,30 @@ import ProjectOne.RegexRule
 import Text.Parser.Char
 import Text.Parser.Combinators
 
+-- | Characters which require escaping.
+specialChars :: String
+specialChars = "+?*()[]\\"
+
 parseRegex :: (Monad m, CharParsing m) => m RegexRule
 parseRegex = do
   error ""
+
+-- TODO: In reality, there can be more than a literal here, but I haven't
+-- written a generalized token parser for this yet, so we specialize it for now
+-- so that other functions can check.
+token :: (Monad m, CharParsing m) => m RegexRule
+token = literal
+
+literal :: (Monad m, CharParsing m) => m RegexRule
+literal = Literal <$> (noneOf specialChars <|> (char '\\' *> anyChar))
+
+-- | Represents some optional match. Another way of saying this is @ε|α@ where
+-- ε is the empty string and α is some token.
+optional :: (Monad m, CharParsing m) => m RegexRule
+optional = Or Epsilon <$> (token <* char '?')
+
+star :: (Monad m, CharParsing m) => m RegexRule
+star = Star <$> (token <* char '*')
+
+plus :: (Monad m, CharParsing m) => m RegexRule
+plus = ap Then Star <$> (token <* char '+')
