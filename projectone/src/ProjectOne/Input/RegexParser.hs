@@ -37,14 +37,10 @@ module ProjectOne.Input.RegexParser where
 
 import Control.Applicative hiding (optional)
 import Control.Monad
-import qualified Data.Set as S
+--import qualified Data.Set as S
 import ProjectOne.RegexRule
 import Text.Parser.Char
 import Text.Parser.Combinators hiding (optional)
-
--- | Characters which require escaping.
-specialChars :: String
-specialChars = "+?*()[]\\"
 
 parseRegex :: (Monad m, CharParsing m) => m RegexRule
 parseRegex = eof *> pure ε <|> regex <* eof

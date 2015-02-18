@@ -12,9 +12,14 @@
 -- internally.
 ----------------------------------------------------------------------------
 module ProjectOne.RegexRule (
-  RegexRule (..),
-  ε
+  RegexRule (..)
+, ε
+, specialChars
 ) where
+
+-- | Characters which require escaping.
+specialChars :: String
+specialChars = "+?*()[]\\"
 
 -- | This defines a data type for representing the various regex rules.
 -- Each constructor represents a rule. We derive an 'Eq' instance so that
@@ -35,7 +40,9 @@ data RegexRule = Epsilon
 -- Using this, we can roughly recover the initial regex, as parsed.
 instance Show RegexRule where
   show Epsilon = "ε"
-  show (Literal c) = [c]
+  show (Literal c) = if c `elem` specialChars
+                     then "\\" ++ [c]
+                     else [c]
   show (Or a b) = "(" ++ show a ++ "|" ++ show b ++ ")"
   show (Then a b) = "(" ++ show a ++ show b ++ ")"
   show (Star a) = "(" ++ show a ++ ")*"
