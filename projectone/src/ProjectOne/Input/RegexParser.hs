@@ -43,7 +43,7 @@ import Text.Parser.Char
 import Text.Parser.Combinators hiding (optional)
 
 parseRegex :: (Monad m, CharParsing m) => m RegexRule
-parseRegex = eof *> pure ε <|> regex <* eof
+parseRegex = eof *> pure ε <|> or' <* eof
 
 parenthesized :: (Monad m, CharParsing m) => m a -> m a
 parenthesized a = char '(' *> a <* char ')'
@@ -51,8 +51,8 @@ parenthesized a = char '(' *> a <* char ')'
 --bracketed :: (Monad m, CharParsing m) => m a -> m a
 --bracketed a = char '[' *> a <* char ']'
 
-regex :: (Monad m, CharParsing m) => m RegexRule
-regex = foldl1 Or <$> (regexTerms `sepBy1` char '|')
+or' :: (Monad m, CharParsing m) => m RegexRule
+or' = foldl1 Or <$> (regexTerms `sepBy1` char '|')
 
 -- TODO: In reality, there can be more than a literal here, but I haven't
 -- written a generalized token parser for this yet, so we specialize it for now
