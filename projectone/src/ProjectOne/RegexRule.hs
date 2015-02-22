@@ -15,7 +15,10 @@ module ProjectOne.RegexRule (
   RegexRule (..)
 , ε
 , specialChars
+, match
 ) where
+
+import Control.Applicative
 
 -- | Characters which require escaping.
 specialChars :: String
@@ -46,3 +49,16 @@ instance Show RegexRule where
   show (Or a b) = "(" ++ show a ++ "|" ++ show b ++ ")"
   show (Then a b) = "(" ++ show a ++ show b ++ ")"
   show (Star a) = "(" ++ show a ++ ")*"
+
+-- | Given a 'RegexRule', attempt to match a string against it.
+match :: RegexRule -> String -> Bool
+match Epsilon x      = x == ""
+match (Literal c) x  = x == [c]
+match (Or a b) x   = match a x || match b x
+match (Then a b) x =
+  or (concatMap (\(a', b') -> [match a a' && match b b']) (allSplits x))
+match s@(Star a) x =
+  match ε x || or [match a a' && match s b' | (a', b') <- tail . allSplits $ x]
+
+allSplits :: [a] -> [([a], [a])]
+allSplits xs = flip splitAt xs <$> [0..length xs]
