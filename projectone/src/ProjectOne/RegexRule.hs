@@ -19,6 +19,7 @@ module ProjectOne.RegexRule (
 ) where
 
 import Control.Applicative
+import qualified Data.List.NonEmpty as NEL
 
 -- | Characters which require escaping.
 specialChars :: String
@@ -56,9 +57,12 @@ match Epsilon x      = x == ""
 match (Literal c) x  = x == [c]
 match (Or a b) x   = match a x || match b x
 match (Then a b) x =
-  or (concatMap (\(a', b') -> [match a a' && match b b']) (allSplits x))
+  or (concatMap (\(a', b') ->
+                  [match a a' && match b b']) (NEL.toList $ allSplits x))
 match s@(Star a) x =
-  match ε x || or [match a a' && match s b' | (a', b') <- tail . allSplits $ x]
+  match ε x || or (concatMap (\(a', b') ->
+                               [match a a' && match s b']) (NEL.tail . allSplits $ x))
 
-allSplits :: [a] -> [([a], [a])]
-allSplits xs = flip splitAt xs <$> [0..length xs]
+allSplits :: [a] -> NEL.NonEmpty ([a], [a])
+allSplits [] = NEL.fromList [([], [])]
+allSplits xs = flip NEL.splitAt (NEL.fromList xs) <$> NEL.fromList [0..length xs]
