@@ -59,3 +59,12 @@ fromRegex (R.Star r) = f . fromRegex $ r
                                                                   ])
                       0
                       (S.singleton (S.size s + 1))
+fromRegex (R.Concat r1 r2) =
+  f (fromRegex r1) (fromRegex r2)
+  where
+    f (NFA s1 e1 i1 _) (NFA s2 e2 _ a2) =
+      NFA
+      (s1 `S.union` S.map (+ (S.size s1 - 1)) s2)
+      (e1 `S.union` S.map (alterEdge (S.size s1 - 1)) e2)
+      i1
+      (S.map (+ (S.size s1 - 1)) a2)
