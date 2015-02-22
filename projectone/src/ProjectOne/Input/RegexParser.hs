@@ -64,7 +64,7 @@ regexTerm :: (Monad m, CharParsing m) => m RegexRule
 regexTerm = try star <|> try plus <|> try optional <|> token
 
 regexTerms :: (Monad m, CharParsing m) => m RegexRule
-regexTerms = foldl1 Then <$> some regexTerm
+regexTerms = foldl1 Concat <$> some regexTerm
 
 literal :: (Monad m, CharParsing m) => m RegexRule
 literal = Literal <$> (noneOf specialChars <|> (char '\\' *> anyChar))
@@ -78,4 +78,4 @@ star :: (Monad m, CharParsing m) => m RegexRule
 star = Star <$> (token <* char '*')
 
 plus :: (Monad m, CharParsing m) => m RegexRule
-plus = ap Then Star <$> (token <* char '+')
+plus = ap Concat Star <$> (token <* char '+')

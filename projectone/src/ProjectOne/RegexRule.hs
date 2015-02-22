@@ -33,7 +33,7 @@ specialChars = "+?*()[]\\"
 data RegexRule = Epsilon
                | Literal Char
                | Or RegexRule RegexRule
-               | Then RegexRule RegexRule
+               | Concat RegexRule RegexRule
                | Star RegexRule
                deriving (Eq)
 
@@ -48,7 +48,7 @@ instance Show RegexRule where
                      then "\\" ++ [c]
                      else [c]
   show (Or a b) = "(" ++ show a ++ "|" ++ show b ++ ")"
-  show (Then a b) = "(" ++ show a ++ show b ++ ")"
+  show (Concat a b) = "(" ++ show a ++ show b ++ ")"
   show (Star a) = "(" ++ show a ++ ")*"
 
 -- | Given a 'RegexRule', attempt to match a string against it.
@@ -56,7 +56,7 @@ match :: RegexRule -> String -> Bool
 match Epsilon x      = x == ""
 match (Literal c) x  = x == [c]
 match (Or a b) x   = match a x || match b x
-match (Then a b) x =
+match (Concat a b) x =
   or (concatMap (\(a', b') ->
                   [match a a' && match b b']) (NEL.toList $ allSplits x))
 match s@(Star a) x =
