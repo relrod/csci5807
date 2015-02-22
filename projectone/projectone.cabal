@@ -14,11 +14,13 @@ cabal-version:       >=1.10
 
 library
   exposed-modules:     ProjectOne.Extraction.CPlusPlus
+                     , ProjectOne.Extraction.Graphviz
                      , ProjectOne.Input.RegexParser
                      , ProjectOne.Input.SpecLineParser
                      , ProjectOne.NFA
   build-depends:       base >= 4 && < 5
                      , containers >= 0.4 && < 0.6
+                     , graphviz >= 2999 && < 3000
                      , parsers >= 0.12 && < 0.13
                      , semigroups >= 0.12 && < 0.17
                      , time >= 1.4 && < 1.6
@@ -32,6 +34,7 @@ executable projectone
   -- other-extensions:
   build-depends:       base >= 4 && < 5
                      , containers >= 0.4 && < 0.6
+                     , graphviz >= 2999 && < 3000
                      , parsers >= 0.12 && < 0.13
                      , semigroups >= 0.12 && < 0.17
                      , time >= 1.4 && < 1.6
