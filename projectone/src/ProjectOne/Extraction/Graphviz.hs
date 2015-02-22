@@ -16,8 +16,8 @@ import Data.GraphViz.Attributes.Complete hiding (Epsilon)
 import Data.Set hiding (map)
 import ProjectOne.NFA
 
-nfaNodes :: NFA a -> [(a, String)]
-nfaNodes (NFA s _ _ _) = map (\x -> (x, "")) (toList s)
+nfaNodes :: Show a => NFA a -> [(a, String)]
+nfaNodes (NFA s _ _ _) = map (\x -> (x, show x)) (toList s)
 
 nfaEdges :: NFA a -> [(a, a, String)]
 nfaEdges (NFA _ e _ _) = map toEdge (toList e)
@@ -29,9 +29,15 @@ outputNfaGraph :: NFA Int -> IO FilePath
 outputNfaGraph nfa = addExtension (runGraphviz (nfaGraph nfa)) Png "graph"
 
 nfaGraph :: NFA Int -> DotGraph Int
-nfaGraph nfa = graphElemsToDot graphParams (nfaNodes nfa) (nfaEdges nfa)
+nfaGraph nfa = graphElemsToDot (graphParams nfa) (nfaNodes nfa) (nfaEdges nfa)
 
-graphParams :: GraphvizParams Int String String () String
-graphParams = defaultParams { fmtEdge = \(_, _, el) -> [toLabel el]
-                            , globalAttributes = [ GraphAttrs [RankDir FromLeft] ]
+nodeShape :: Int -> NFA Int -> Attribute
+nodeShape x (NFA _ _ _ as) = if x `member` as
+                             then shape DoubleCircle
+                             else shape Circle
+
+graphParams :: NFA Int -> GraphvizParams Int String String () String
+graphParams nfa = defaultParams { fmtEdge = \(_, _, el) -> [toLabel el]
+                                , fmtNode = \(i,l) -> [toLabel l, nodeShape i nfa]
+                                , globalAttributes = [ GraphAttrs [RankDir FromLeft] ]
                             }
