@@ -40,4 +40,4 @@ graphParams :: NFA Int -> GraphvizParams Int String String () String
 graphParams nfa = defaultParams { fmtEdge = \(_, _, el) -> [toLabel el]
                                 , fmtNode = \(i,l) -> [toLabel l, nodeShape i nfa]
                                 , globalAttributes = [ GraphAttrs [RankDir FromLeft] ]
-                            }
+                                }
