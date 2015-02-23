@@ -68,3 +68,16 @@ fromRegex (R.Concat r1 r2) =
       (e1 `S.union` S.map (alterEdge (S.size s1 - 1)) e2)
       i1
       (S.map (+ (S.size s1 - 1)) a2)
+fromRegex (R.Or r1 r2) =
+  f (fromRegex r1) (fromRegex r2)
+  where
+    f (NFA s1 e1 _ _) (NFA s2 e2 _ _) =
+      NFA
+      (S.map (+1) s1 `S.union` S.map (+ (S.size s1 + 1)) s2 `S.union` S.fromList[0, (S.size s1 + S.size s2 + 1)])
+      (S.map (alterEdge 1) e1 `S.union` S.map (alterEdge (S.size s1 + 1)) e2 `S.union` S.fromList [ Epsilon 0 1
+                                            , Epsilon 0 (S.size s1 + 1)
+                                            , Epsilon (S.size s1) (S.size s1 + S.size s2 + 1)
+                                            , Epsilon (S.size s1 + S.size s2) (S.size s1 + S.size s2 + 1)
+                                            ])
+      0
+      (S.singleton (S.size s1 + S.size s2 + 1))
