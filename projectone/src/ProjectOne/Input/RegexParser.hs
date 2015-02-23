@@ -58,7 +58,7 @@ or' = foldl1 Or <$> (regexTerms `sepBy1` char '|')
 -- written a generalized token parser for this yet, so we specialize it for now
 -- so that other functions can check.
 token :: (Monad m, CharParsing m) => m RegexRule
-token = literal
+token = literal <|> parenthesized or'
 
 regexTerm :: (Monad m, CharParsing m) => m RegexRule
 regexTerm = try star <|> try plus <|> try optional <|> token

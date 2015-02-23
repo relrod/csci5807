@@ -23,7 +23,7 @@ import qualified Data.List.NonEmpty as NEL
 
 -- | Characters which require escaping.
 specialChars :: String
-specialChars = "+?*()[]\\"
+specialChars = "+?*()[]\\|"
 
 -- | This defines a data type for representing the various regex rules.
 -- Each constructor represents a rule. We derive an 'Eq' instance so that
