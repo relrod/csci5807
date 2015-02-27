@@ -19,6 +19,8 @@ module ProjectOne.Input.SpecLineParser (
 import Control.Applicative
 import Control.Monad
 import qualified Data.Set as S
+import ProjectOne.Input.RegexParser
+import ProjectOne.RegexRule
 import Text.Parser.Char
 import Text.Parser.Combinators
 
@@ -26,23 +28,19 @@ data SpecLine = Class { className :: String
                       , classSet  :: S.Set Char
                       }
               | Token { tokenName  :: String
-                      , tokenRegex :: String
-                        -- ^ By specification, we cannot do anything else here.
+                      , tokenRegex :: RegexRule
                       }
-              | Ignore { ignoreRegex :: String
-                        -- ^ By specification, we cannot do anything else here.
+              | Ignore { ignoreRegex :: RegexRule
                        }
               | Comment String
-              deriving (Eq, Ord, Show)
+              deriving (Eq, Show)
 
 -- | We use the @parsers@ abstraction library atop the @trifecta@ parser
 -- combinator library but __only__ for parsing input lines. Notably,
 -- page 3 of the project specification says to not touch the regex with any
--- any library, so we make a point here of only doing sanity checks on it and
--- not actually treating it as a regex in any manner. The sanity checks we do
--- are as follows:
---
---    * (None yet)
+-- any regex library. We are not doing that, but we are using a parsing library
+-- to parse it into Haskell types that we can work with. All of the
+-- NFA/DFA/transformations are done manually (see @ProjectOne.NFA@, etc.).
 parseSpecLine :: (Monad m, CharParsing m) => m SpecLine
 parseSpecLine = do
   skipMany space
@@ -68,13 +66,13 @@ parseSpecLine = do
       _ <- some space
       -- TODO: Check to ensure this is a valid C++ identifier.
       identifier <- manyTill anyChar (try (some space))
-      regex <- manyTill anyChar (try newline)
+      regex <- parseRegex
       return $ Token identifier regex
 
     ignoreDecl = do
       _ <- string "ignore"
       _ <- some space
-      regex <- manyTill anyChar (try newline)
+      regex <- parseRegex
       return $ Ignore regex
 
     comment = do
