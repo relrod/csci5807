@@ -18,14 +18,13 @@ module ProjectOne.Input.SpecLineParser (
 
 import Control.Applicative
 import Control.Monad
-import qualified Data.Set as S
 import ProjectOne.Input.RegexParser
 import ProjectOne.RegexRule
 import Text.Parser.Char
 import Text.Parser.Combinators
 
 data SpecLine = Class { className :: String
-                      , classSet  :: S.Set Char
+                      , classSet  :: RegexRule
                       }
               | Token { tokenName  :: String
                       , tokenRegex :: RegexRule
@@ -57,9 +56,9 @@ parseSpecLine = do
       -- TODO: Check to ensure this is a valid C++ identifier.
       identifier <- manyTill anyChar (try (some space))
       _ <- char '['
-      setMembers <- manyTill (choice [try charRange, return <$> anyChar]) (try (char ']'))
+      classMembers <- manyTill (choice [try charRange, return <$> anyChar]) (try (char ']'))
       _ <- newline
-      return $ Class identifier (S.fromList . join $ setMembers)
+      return $ Class identifier (foldr Or Epsilon (map Literal . join $ classMembers))
 
     tokenDecl = do
       _ <- string "token"
