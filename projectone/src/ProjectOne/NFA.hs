@@ -81,3 +81,12 @@ fromRegex (R.Or r1 r2) =
                                             ])
       0
       (S.singleton (S.size s1 + S.size s2 + 1))
+
+-- | Calculate the \"limit\" of a function which manipulates an NFA in som way.
+--
+-- That is, calculate the value that the NFA tends to under some function @f@.
+limit :: Eq a => (NFA a -> NFA a) -> NFA a -> NFA a
+limit f n =
+  if n == f n
+  then n
+  else limit f (f n)
