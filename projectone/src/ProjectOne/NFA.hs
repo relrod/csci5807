@@ -13,6 +13,8 @@ module ProjectOne.NFA (
   NFA (..)
 , Edge (..)
 , fromRegex
+, limit
+, singleMove
 ) where
 
 import qualified Data.Set as S
@@ -90,3 +92,12 @@ limit f n =
   if n == f n
   then n
   else limit f (f n)
+
+-- | Given an 'NFA', a character, and a set, follow a single edge and get the
+-- set of available edges after that point.
+singleMove :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
+singleMove (NFA _ e _ _) c s' =
+  S.fromList [z | t <- S.toList s',
+                       Edge x y z <- S.toList e,
+                       x == t,
+                       c == y]
