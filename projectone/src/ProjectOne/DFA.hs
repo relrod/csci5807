@@ -7,10 +7,13 @@
 -- Stability : experimental
 -- Portability : ghc
 --
--- Functions for converting from an 'NFA' to a DFA.
+-- Functions for converting from an 'NFA' to a 'DFA'.
 ----------------------------------------------------------------------------
 module ProjectOne.DFA (
+  DFA (..)
 ) where
 
-import Control.Applicative
-import qualified Data.List.NonEmpty as NEL
+import qualified Data.Set as S
+import ProjectOne.NFA
+
+newtype DFA a = DFA (NFA a)
