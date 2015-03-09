@@ -96,13 +96,6 @@ limit f n =
   then n
   else limit f (f n)
 
--- | Calculate the \"limit\" of a function applied to some set.
-limit' :: Eq a => (S.Set a -> S.Set a) -> S.Set a -> S.Set a
-limit' f s =
-  if s == f s
-  then s
-  else limit' f (f s)
-
 -- | Given an 'NFA', a character, and a set, follow a single edge and get the
 -- set of available edges after that point.
 singleMove :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
@@ -114,7 +107,7 @@ singleMove (NFA _ e _ _) c s' =
 
 -- | Given an 'NFA' and a set of states, determine the ε-closure of the set.
 epsilonClosure :: Ord a => NFA a -> S.Set a -> S.Set a
-epsilonClosure (NFA _ e _ _) = limit' h
+epsilonClosure (NFA _ e _ _) = limit h
   where
     h states' = states' `S.union` (S.fromList [ss | x <- S.toList states',
                                                     Epsilon y ss <- S.toList e,
