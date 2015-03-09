@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE RankNTypes #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module : ProjectOne.NFA
@@ -90,7 +90,7 @@ fromRegex (R.Or r1 r2) =
 -- | Calculate the \"limit\" of a function which manipulates an NFA in some way.
 --
 -- That is, calculate the value that the NFA tends to under some function @f@.
-limit :: Eq a => (NFA a -> NFA a) -> NFA a -> NFA a
+limit :: forall a. Eq a => (a -> a) -> a -> a
 limit f n =
   if n == f n
   then n
