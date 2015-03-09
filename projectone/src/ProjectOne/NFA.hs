@@ -1,3 +1,4 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module : ProjectOne.NFA
@@ -14,7 +15,9 @@ module ProjectOne.NFA (
 , Edge (..)
 , fromRegex
 , limit
+, limit'
 , singleMove
+, epsilonClosure
 ) where
 
 import qualified Data.Set as S
@@ -84,7 +87,7 @@ fromRegex (R.Or r1 r2) =
       0
       (S.singleton (S.size s1 + S.size s2 + 1))
 
--- | Calculate the \"limit\" of a function which manipulates an NFA in som way.
+-- | Calculate the \"limit\" of a function which manipulates an NFA in some way.
 --
 -- That is, calculate the value that the NFA tends to under some function @f@.
 limit :: Eq a => (NFA a -> NFA a) -> NFA a -> NFA a
@@ -92,6 +95,13 @@ limit f n =
   if n == f n
   then n
   else limit f (f n)
+
+-- | Calculate the \"limit\" of a function applied to some set.
+limit' :: Eq a => (S.Set a -> S.Set a) -> S.Set a -> S.Set a
+limit' f s =
+  if s == f s
+  then s
+  else limit' f (f s)
 
 -- | Given an 'NFA', a character, and a set, follow a single edge and get the
 -- set of available edges after that point.
@@ -101,3 +111,12 @@ singleMove (NFA _ e _ _) c s' =
                        Edge x y z <- S.toList e,
                        x == t,
                        c == y]
+
+-- | Given an 'NFA' and a set of states, determine the ε-closure of the set.
+epsilonClosure :: Ord a => NFA a -> S.Set a -> S.Set a
+epsilonClosure (NFA _ e _ _) = limit' h
+  where
+    h states' = states' `S.union` (S.fromList [ss | x <- S.toList states',
+                                                    Epsilon y ss <- S.toList e,
+                                                    y == x])
+
