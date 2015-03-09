@@ -87,9 +87,7 @@ fromRegex (R.Or r1 r2) =
       0
       (S.singleton (S.size s1 + S.size s2 + 1))
 
--- | Calculate the \"limit\" of a function which manipulates an NFA in some way.
---
--- That is, calculate the value that the NFA tends to under some function @f@.
+-- | Calculate the \"limit\" of a function.
 limit :: forall a. Eq a => (a -> a) -> a -> a
 limit f n =
   if n == f n
