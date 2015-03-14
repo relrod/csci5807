@@ -15,7 +15,6 @@ module ProjectOne.NFA (
 , Edge (..)
 , fromRegex
 , limit
-, limit'
 , singleMove
 , epsilonClosure
 ) where
