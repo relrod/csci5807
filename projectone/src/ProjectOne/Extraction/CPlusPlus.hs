@@ -41,12 +41,14 @@ preamble h u =
     generated = "// Generated: " ++ show u
     spacesGeneratedLine = replicate (72 - length generated) ' '
     generatedLine = generated ++ spacesGeneratedLine ++ "//\n"
+{-# INLINE preamble #-}
 
 postamble :: Bool -- ^ True if this is a header file, false if not
           -> String
 postamble h = if h
               then "#endif /* PROJECT_ONE_INCLUDE guard */"
               else ""
+{-# INLINE postamble #-}
 
 -- Header file declarations --
 
@@ -58,3 +60,4 @@ classDef =
   \    void start(void);\n\
   \    bool next(Token &t, string &lexeme) throw invalid_argument;\n\
   \};\n"
+{-# INLINE classDef #-}

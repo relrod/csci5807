@@ -82,3 +82,4 @@ parseSpecLine = do
 
 specLines :: (Monad m, CharParsing m) => m [SpecLine]
 specLines = manyTill parseSpecLine (try eof)
+{-# INLINE specLines #-}

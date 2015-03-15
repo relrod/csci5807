@@ -39,6 +39,7 @@ data Edge a = Edge a Char a
 alterEdge :: Int -> Edge Int -> Edge Int
 alterEdge n (Edge x c y) = Edge (n + x) c (n + y)
 alterEdge n (Epsilon x y) = Epsilon (n + x) (n + y)
+{-# INLINE alterEdge #-}
 
 fromRegex :: R.RegexRule -> NFA Int
 fromRegex (R.Literal c) = NFA
@@ -91,6 +92,7 @@ limit f n =
   if n == f n
   then n
   else limit f (f n)
+{-# INLINE limit #-}
 
 -- | Given an 'NFA', a character, and a set, follow a single edge and get the
 -- set of available edges after that point.
@@ -100,12 +102,13 @@ singleMove (NFA _ e _ _) c s' =
                        Edge x y z <- S.toList e,
                        x == t,
                        c == y]
+{-# INLINE singleMove #-}
 
 -- | Given an 'NFA' and a set of states, determine the ε-closure of the set.
 epsilonClosure :: Ord a => NFA a -> S.Set a -> S.Set a
 epsilonClosure (NFA _ e _ _) = limit h
   where
     h states' = states' `S.union` (S.fromList [ss | x <- S.toList states',
-                                                    Epsilon y ss <- S.toList e,
-                                                    y == x])
-
+                                               Epsilon y ss <- S.toList e,
+                                               y == x])
+{-# INLINE epsilonClosure #-}

@@ -18,26 +18,32 @@ import ProjectOne.NFA
 
 nfaNodes :: Show a => NFA a -> [(a, String)]
 nfaNodes (NFA s _ _ _) = map (\x -> (x, show x)) (toList s)
+{-# INLINE nfaNodes #-}
 
 nfaEdges :: NFA a -> [(a, a, String)]
 nfaEdges (NFA _ e _ _) = map toEdge (toList e)
   where
     toEdge (Epsilon a b) = (a, b, "ε")
     toEdge (Edge a ch b) = (a, b, [ch])
+{-# INLINE nfaEdges #-}
 
 outputNfaGraph :: NFA Int -> IO FilePath
 outputNfaGraph nfa = addExtension (runGraphviz (nfaGraph nfa)) Png "graph"
+{-# INLINE outputNfaGraph #-}
 
 nfaGraph :: NFA Int -> DotGraph Int
 nfaGraph nfa = graphElemsToDot (graphParams nfa) (nfaNodes nfa) (nfaEdges nfa)
+{-# INLINE nfaGraph #-}
 
 nodeShape :: Int -> NFA Int -> Attribute
 nodeShape x (NFA _ _ _ as) = if x `member` as
                              then shape DoubleCircle
                              else shape Circle
+{-# INLINE nodeShape #-}
 
 graphParams :: NFA Int -> GraphvizParams Int String String () String
 graphParams nfa = defaultParams { fmtEdge = \(_, _, el) -> [toLabel el]
                                 , fmtNode = \(i,l) -> [toLabel l, nodeShape i nfa]
                                 , globalAttributes = [ GraphAttrs [RankDir FromLeft] ]
                                 }
+{-# INLINE graphParams #-}
