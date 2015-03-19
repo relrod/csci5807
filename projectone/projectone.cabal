@@ -17,6 +17,7 @@ library
                      , ProjectOne.Extraction.Graphviz
                      , ProjectOne.Input.RegexParser
                      , ProjectOne.Input.SpecLineParser
+                     , ProjectOne.DFA
                      , ProjectOne.NFA
   build-depends:       base >= 4 && < 5
                      , containers >= 0.4 && < 0.6

@@ -15,7 +15,9 @@ module ProjectOne.NFA (
 , fromRegex
 , limit
 , singleMove
+, singleTransition
 , epsilonClosure
+, alphabet
 ) where
 
 import qualified Data.Set as S
@@ -104,6 +106,9 @@ singleMove (NFA _ e _ _) c s' =
                        c == y]
 {-# INLINE singleMove #-}
 
+singleTransition :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
+singleTransition m c = epsilonClosure m . singleMove m c
+
 -- | Given an 'NFA' and a set of states, determine the ε-closure of the set.
 epsilonClosure :: Ord a => NFA a -> S.Set a -> S.Set a
 epsilonClosure (NFA _ e _ _) = limit h
@@ -112,3 +117,7 @@ epsilonClosure (NFA _ e _ _) = limit h
                                                Epsilon y ss <- S.toList e,
                                                y == x])
 {-# INLINE epsilonClosure #-}
+
+alphabet :: NFA a -> S.Set Char
+alphabet (NFA _ e _ _) = S.fromList [ c | Edge _ c _ <- S.toList e ]
+{-# INLINE alphabet #-}
