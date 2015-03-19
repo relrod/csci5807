@@ -35,7 +35,7 @@ preamble h u =
   if h
   then
     "#ifndef PROJECT_ONE_INCLUDE\n\
-     \#define PROJECT_ONE_INCLUDE\n"
+    \#define PROJECT_ONE_INCLUDE\n"
   else ""
   where
     generated = "// Generated: " ++ show u
