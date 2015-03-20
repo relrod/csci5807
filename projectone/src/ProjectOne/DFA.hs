@@ -11,8 +11,9 @@
 ----------------------------------------------------------------------------
 module ProjectOne.DFA (
   DFA (..)
-, newMove
+, newStep
 , newMoves
+, newMove
 ) where
 
 import qualified Data.Set as S
@@ -20,12 +21,12 @@ import ProjectOne.NFA
 
 newtype DFA a = DFA (NFA a)
 
---newStep :: NFA Int -> S.Set Char -> DFA (S.Set Int) -> DFA (S.Set Int)
---newStep m@(NFA s e i a) al d@(DFA (NFA s' e' i' a')) =
---  DFA (NFA (S.fromList $ helper (DFA m) (S.toList al) d (S.toList s')))
---  where
---    helper _ _ d [] = d
---    helper m a d (x:xs) = helper m a (newMoves m x a d) xs
+newStep :: NFA Int -> String -> DFA (S.Set Int) -> DFA (S.Set Int)
+newStep m al d@(DFA (NFA s' _ _ _)) =
+  helper (DFA m) al d (S.toList s')
+  where
+    helper _ _ d' [] = d'
+    helper m' al' d' (x:xs) = helper m' al' (newMoves m' x al' d') xs
 
 -- TODO: This should be a fold or something instead
 newMoves :: DFA Int -> S.Set Int -> String -> DFA (S.Set Int) -> DFA (S.Set Int)
