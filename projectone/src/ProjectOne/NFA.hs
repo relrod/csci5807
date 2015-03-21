@@ -79,7 +79,7 @@ fromRegex (R.Or r1 r2) =
   where
     f (NFA s1 e1 _ _) (NFA s2 e2 _ _) =
       NFA
-      (S.map (+1) s1 `S.union` S.map (+ (S.size s1 + 1)) s2 `S.union` S.fromList[0, (S.size s1 + S.size s2 + 1)])
+      (S.map (+1) s1 `S.union` S.map (+ (S.size s1 + 1)) s2 `S.union` S.fromList[0, S.size s1 + S.size s2 + 1])
       (S.map (alterEdge 1) e1 `S.union` S.map (alterEdge (S.size s1 + 1)) e2 `S.union` S.fromList [ Epsilon 0 1
                                             , Epsilon 0 (S.size s1 + 1)
                                             , Epsilon (S.size s1) (S.size s1 + S.size s2 + 1)
@@ -113,9 +113,9 @@ singleTransition m c = epsilonClosure m . singleMove m c
 epsilonClosure :: Ord a => NFA a -> S.Set a -> S.Set a
 epsilonClosure (NFA _ e _ _) = limit h
   where
-    h states' = states' `S.union` (S.fromList [ss | x <- S.toList states',
-                                               Epsilon y ss <- S.toList e,
-                                               y == x])
+    h states' = states' `S.union` S.fromList [ss | x <- S.toList states',
+                                                   Epsilon y ss <- S.toList e,
+                                                   y == x]
 {-# INLINE epsilonClosure #-}
 
 alphabet :: NFA a -> S.Set Char

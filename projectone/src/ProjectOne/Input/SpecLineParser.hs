@@ -58,7 +58,7 @@ parseSpecLine = do
       _ <- char '['
       classMembers <- manyTill (choice [try charRange, return <$> anyChar]) (try (char ']'))
       _ <- newline
-      return $ Class identifier (foldr Or Epsilon (map Literal . join $ classMembers))
+      return $ Class identifier (foldr (Or . Literal) Epsilon (join classMembers))
 
     tokenDecl = do
       _ <- string "token"
