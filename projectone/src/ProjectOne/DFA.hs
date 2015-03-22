@@ -27,11 +27,13 @@ newStep m al d@(DFA (NFA s' _ _ _)) =
   where
     helper _ _ d' [] = d'
     helper m' al' d' (x:xs) = helper m' al' (newMoves m' x al' d') xs
+{-# INLINE newStep #-}
 
 -- TODO: This should be a fold or something instead
 newMoves :: DFA Int -> S.Set Int -> String -> DFA (S.Set Int) -> DFA (S.Set Int)
 newMoves _ _ [] d = d
 newMoves d@(DFA m) s (x:xs) d' = newMoves d s xs (newMove m s x d')
+{-# INLINE newMoves #-}
 
 newMove :: NFA Int -> S.Set Int -> Char -> DFA (S.Set Int) -> DFA (S.Set Int)
 newMove m@(NFA _ _ _ a) x c (DFA (NFA s' e' i' a')) =
@@ -43,3 +45,4 @@ newMove m@(NFA _ _ _ a) x c (DFA (NFA s' e' i' a')) =
      (if a `S.intersection` newTrans == S.empty
       then a'
       else a' `S.union` S.singleton newTrans)
+{-# INLINE newMove #-}
