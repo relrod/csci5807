@@ -14,4 +14,3 @@ token comment \/\/.*\n
 token test this\ is\ a\ test
 
 ignore (\n|\r|\f|\t)+
-

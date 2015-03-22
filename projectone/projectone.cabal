@@ -28,6 +28,7 @@ library
                      , trifecta >= 1.2 && < 1.6
   hs-source-dirs:      src
   default-language:    Haskell2010
+  ghc-options:         -Wall
 
 executable projectone
   main-is:             Main.hs
@@ -42,3 +43,4 @@ executable projectone
                      , trifecta >= 1.2 && < 1.6
   hs-source-dirs:      src
   default-language:    Haskell2010
+  ghc-options:         -Wall
