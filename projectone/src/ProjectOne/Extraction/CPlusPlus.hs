@@ -17,9 +17,15 @@ module ProjectOne.Extraction.CPlusPlus (
 
 -- * Header file declarations
 , classDef
+
+-- * Actual finite automata extraction
+, outputEdges
 ) where
 
+import qualified Data.Set as S
 import Data.Time
+import ProjectOne.DFA
+import ProjectOne.NFA
 
 preamble :: Bool -- ^ True if this is a header file, false if not
          -> UTCTime -- ^ Used for the "Generated: " line
@@ -61,3 +67,25 @@ classDef =
   \    bool next(Token &t, string &lexeme) throw invalid_argument;\n\
   \};\n"
 {-# INLINE classDef #-}
+
+-- Actual output --
+
+-- | Output the edge table for a 'DFA'.
+outputEdges :: DFA Int -> String
+outputEdges dfa =
+  unlines . S.toList $ S.map f e
+  where
+    NFA _ e _ _ = getNFA dfa
+    f (Edge a ch b) =
+      "edge[" ++ show a ++ "][" ++ show ch ++ "] = " ++ show b ++ ";"
+    f (Epsilon a b) = "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"
+
+-- | Output the list of accepting states for a 'DFA'.
+outputAcceptingStates :: DFA Int -> String
+outputAcceptingStates dfa =
+  unlines . S.toList $ S.map f e
+  where
+    NFA _ e _ _ = getNFA dfa
+    f (Edge a ch b) =
+      "edge[" ++ show a ++ "][" ++ show ch ++ "] = " ++ show b ++ ";"
+    f (Epsilon a b) = "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"
