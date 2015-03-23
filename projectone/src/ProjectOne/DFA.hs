@@ -83,3 +83,4 @@ setToNumbered (DFA (NFA s e i a)) = DFA (NFA s' e' i' a')
 -- | Given an 'NFA' 'Int', convert it to a deterministic machine ('DFA' 'Int').
 nfaToDfa :: NFA Int -> DFA Int
 nfaToDfa m = setToNumbered $ toDeterministic (DFA m) (alphabet m)
+{-# INLINE nfaToDfa #-}
