@@ -18,21 +18,46 @@
 module Main where
 
 import Control.Monad
+import Options.Applicative
 import System.Environment (getArgs, getProgName)
-import Text.Trifecta
+import Text.Trifecta hiding (Parser)
 
 import ProjectOne.Extraction.CPlusPlus
+import ProjectOne.Extraction.TextTable
 import ProjectOne.Input.SpecLineParser
 import ProjectOne.RegexRule
 
+data OutputMode = CPlusPlus | TextTable deriving (Eq, Show, Ord)
+
+data Arguments = Arguments {
+    inputFile :: String
+  , nfa :: Bool
+  --, mode :: OutputMode
+  } deriving (Eq, Show, Ord)
+
+args :: Parser Arguments
+args = Arguments
+  <$> strOption
+      ( long "hello"
+     <> metavar "TARGET"
+     <> help "Target for the greeting" )
+  <*> switch
+      ( long "nfa"
+     <> short 'n'
+     <> help "Use an NFA instead of a DFA" )
+  -- TODO: OutputMode
+
 main :: IO ()
-main = do
-  arguments <- getArgs
-  progname <- getProgName
-  when (length arguments /= 2) $
-    error $ "Usage: " ++ progname ++ " <input file> <output prefix>"
-  let (inFile:outFiles:_) = arguments
-  inputLines <- parseFromFile specLines inFile
+main = execParser opts >>= main'
+  where
+    opts = info (helper <*> args)
+      ( fullDesc
+     <> progDesc "Generate an NFA or DFA for a given input file"
+     <> header "projectone - an implementation of CSCI 5807 project one" )
+
+main' :: Arguments -> IO ()
+main' (Arguments input shouldUseNfa) = do
+  inputLines <- parseFromFile specLines input
   case inputLines of
    Just lines' -> print lines'
    Nothing     -> error "Invalid file format given."
