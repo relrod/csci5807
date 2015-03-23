@@ -10,12 +10,8 @@
 -- Functions for converting from an 'NFA' to a 'DFA'.
 ----------------------------------------------------------------------------
 module ProjectOne.DFA (
-  DFA (..)
-, newStep
-, newMoves
-, newMove
-, toDeterministic
-, setToNumbered
+  DFA
+, nfaToDfa
 ) where
 
 import qualified Data.Set as S
@@ -83,3 +79,7 @@ setToNumbered (DFA (NFA s e i a)) = DFA (NFA s' e' i' a')
     i' = alter i
     a' = S.map alter a
 {-# INLINE setToNumbered #-}
+
+-- | Given an 'NFA' 'Int', convert it to a deterministic machine ('DFA' 'Int').
+nfaToDfa :: NFA Int -> DFA Int
+nfaToDfa m = setToNumbered $ toDeterministic (DFA m) (alphabet m)

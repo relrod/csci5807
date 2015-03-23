@@ -118,6 +118,6 @@ epsilonClosure (NFA _ e _ _) = limit h
                                                    y == x]
 {-# INLINE epsilonClosure #-}
 
-alphabet :: NFA a -> S.Set Char
-alphabet (NFA _ e _ _) = S.fromList [ c | Edge _ c _ <- S.toList e ]
+alphabet :: NFA a -> String
+alphabet (NFA _ e _ _) = [ c | Edge _ c _ <- S.toList e ]
 {-# INLINE alphabet #-}
