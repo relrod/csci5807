@@ -15,6 +15,7 @@ cabal-version:       >=1.10
 library
   exposed-modules:     ProjectOne.Extraction.CPlusPlus
                      , ProjectOne.Extraction.Graphviz
+                     , ProjectOne.Extraction.TextTable
                      , ProjectOne.Input.RegexParser
                      , ProjectOne.Input.SpecLineParser
                      , ProjectOne.DFA
