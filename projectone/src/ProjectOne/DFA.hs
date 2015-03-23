@@ -10,7 +10,7 @@
 -- Functions for converting from an 'NFA' to a 'DFA'.
 ----------------------------------------------------------------------------
 module ProjectOne.DFA (
-  DFA
+  DFA (getNFA)
 , nfaToDfa
 ) where
 
