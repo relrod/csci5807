@@ -15,6 +15,7 @@ module ProjectOne.DFA (
 , newMoves
 , newMove
 , toDeterministic
+, setToNumbered
 ) where
 
 import qualified Data.Set as S
@@ -61,3 +62,24 @@ toDeterministic m@(DFA (NFA _ _ i a)) al = limit (newStep m al) (DFA sm)
              cl
              fin
 {-# INLINE toDeterministic #-}
+
+setToNumbered :: DFA (S.Set Int) -> DFA Int
+setToNumbered (DFA (NFA s e i a)) = DFA (NFA s' e' i' a')
+  where
+    -- TODO: Option type
+    findList [] _ _ = error "This should never happen"
+    findList (x:xs) n y =
+      if x == y
+      then n
+      else findList xs (n + 1) y
+    sl = S.toList s
+    findList' l x = findList l 0 x
+    alter = findList' sl
+    s' = S.map alter s
+    e' = S.map f e
+      where
+        f (Edge x c y) = Edge (alter x) c (alter y)
+        f (Epsilon x y) = Epsilon (alter x) (alter y)
+    i' = alter i
+    a' = S.map alter a
+{-# INLINE setToNumbered #-}
