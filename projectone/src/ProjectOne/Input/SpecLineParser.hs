@@ -19,7 +19,7 @@ module ProjectOne.Input.SpecLineParser (
 import Control.Applicative
 import Control.Monad
 import ProjectOne.Input.RegexParser
-import ProjectOne.RegexRule
+import ProjectOne.RegexRule hiding (Class)
 import Text.Parser.Char
 import Text.Parser.Combinators
 

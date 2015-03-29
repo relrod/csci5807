@@ -17,35 +17,39 @@
 ----------------------------------------------------------------------------
 module Main where
 
-import Control.Monad
+import Data.Maybe (fromMaybe)
 import Options.Applicative
-import System.Environment (getArgs, getProgName)
 import Text.Trifecta hiding (Parser)
 
-import ProjectOne.Extraction.CPlusPlus
-import ProjectOne.Extraction.TextTable
 import ProjectOne.Input.SpecLineParser
-import ProjectOne.RegexRule
 
-data OutputMode = CPlusPlus | TextTable deriving (Eq, Show, Ord)
+data OutputMode = CPlusPlus | TextTable | Graphviz deriving (Eq, Show, Ord)
 
 data Arguments = Arguments {
     inputFile :: String
+  , mode :: String
   , nfa :: Bool
-  --, mode :: OutputMode
   } deriving (Eq, Show, Ord)
+
+strToOutputMode :: String -> Maybe OutputMode
+strToOutputMode "cplusplus" = Just CPlusPlus
+strToOutputMode "text"      = Just TextTable
+strToOutputMode "graphviz"  = Just Graphviz
+strToOutputMode _           = Nothing
 
 args :: Parser Arguments
 args = Arguments
-  <$> strOption
-      ( long "hello"
-     <> metavar "TARGET"
-     <> help "Target for the greeting" )
+  <$> strArgument
+      ( metavar "RULESFILE"
+     <> help "Regex rules file" )
+  <*> strOption
+      ( metavar "OUTPUTFORMAT"
+     <> help "Output format (cplusplus, text, graphviz)"
+     <> value "text" )
   <*> switch
       ( long "nfa"
      <> short 'n'
      <> help "Use an NFA instead of a DFA" )
-  -- TODO: OutputMode
 
 main :: IO ()
 main = execParser opts >>= main'
@@ -56,7 +60,8 @@ main = execParser opts >>= main'
      <> header "projectone - an implementation of CSCI 5807 project one" )
 
 main' :: Arguments -> IO ()
-main' (Arguments input shouldUseNfa) = do
+main' (Arguments input mode' _) = do
+  let _mode'' = fromMaybe (error "Invalid mode specified") (strToOutputMode mode')
   inputLines <- parseFromFile specLines input
   case inputLines of
    Just lines' -> print lines'

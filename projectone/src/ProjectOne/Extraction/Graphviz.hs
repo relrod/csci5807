@@ -24,7 +24,7 @@ nfaEdges :: NFA a -> [(a, a, String)]
 nfaEdges (NFA _ e _ _) = map toEdge (toList e)
   where
     toEdge (Epsilon a b) = (a, b, "ε")
-    toEdge (Edge a ch b) = (a, b, [ch])
+    toEdge (Edge a ch b) = (a, b, ch)
 {-# INLINE nfaEdges #-}
 
 outputNfaGraph :: NFA Int -> IO FilePath

@@ -38,7 +38,7 @@ newMove m@(NFA _ _ _ a) x c (DFA (NFA s' e' i' a')) =
   let newTrans = singleTransition m c x
   in DFA $ NFA
      (s' `S.union` S.singleton newTrans)
-     (e' `S.union` S.singleton (Edge x c newTrans))
+     (e' `S.union` S.singleton (Edge x [c] newTrans))
      i'
      (if a `S.intersection` newTrans == S.empty
       then a'

@@ -50,8 +50,9 @@ parenthesized :: (Monad m, CharParsing m) => m a -> m a
 parenthesized a = char '(' *> a <* char ')'
 {-# INLINE parenthesized #-}
 
---bracketed :: (Monad m, CharParsing m) => m a -> m a
---bracketed a = char '[' *> a <* char ']'
+bracketed :: (Monad m, CharParsing m) => m RegexRule
+bracketed = Class <$> (char '[' >> manyTill anyChar (try $ char ']'))
+{-# INLINE bracketed #-}
 
 or' :: (Monad m, CharParsing m) => m RegexRule
 or' = foldl1 Or <$> (regexTerms `sepBy1` char '|')
@@ -61,7 +62,7 @@ or' = foldl1 Or <$> (regexTerms `sepBy1` char '|')
 -- written a generalized token parser for this yet, so we specialize it for now
 -- so that other functions can check.
 token :: (Monad m, CharParsing m) => m RegexRule
-token = literal <|> parenthesized or'
+token = literal <|> parenthesized or' <|> bracketed
 {-# INLINE token #-}
 
 regexTerm :: (Monad m, CharParsing m) => m RegexRule

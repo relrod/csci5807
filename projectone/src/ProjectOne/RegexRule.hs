@@ -35,6 +35,7 @@ data RegexRule = Epsilon
                | Or RegexRule RegexRule
                | Concat RegexRule RegexRule
                | Star RegexRule
+               | Class String
                deriving (Eq)
 
 ε :: RegexRule
@@ -44,6 +45,7 @@ data RegexRule = Epsilon
 -- Using this, we can roughly recover the initial regex, as parsed.
 instance Show RegexRule where
   show Epsilon = "ε"
+  show (Class c) = "[" ++ c ++ "]"
   show (Literal c) = if c `elem` specialChars
                      then "\\" ++ [c]
                      else [c]
@@ -62,6 +64,7 @@ match (Concat a b) x =
 match s@(Star a) x =
   match ε x || or (concatMap (\(a', b') ->
                                [match a a' && match s b']) (NEL.tail . allSplits $ x))
+match _ _ = error "This is here to shut up GHC."
 
 allSplits :: [a] -> NEL.NonEmpty ([a], [a])
 allSplits [] = NEL.fromList [([], [])]
