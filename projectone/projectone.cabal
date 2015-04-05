@@ -21,6 +21,7 @@ library
                      , ProjectOne.DFA
                      , ProjectOne.NFA
   build-depends:       base >= 4 && < 5
+                     , bytestring >= 0.10 && < 0.11
                      , containers >= 0.4 && < 0.6
                      , graphviz >= 2999 && < 3000
                      , parsers >= 0.12 && < 0.13
@@ -36,6 +37,7 @@ executable projectone
   -- other-modules:
   -- other-extensions:
   build-depends:       base >= 4 && < 5
+                     , bytestring >= 0.10 && < 0.11
                      , containers >= 0.4 && < 0.6
                      , graphviz >= 2999 && < 3000
                      , optparse-applicative >= 0.9 && < 0.12
