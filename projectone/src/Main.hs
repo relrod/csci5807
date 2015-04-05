@@ -62,7 +62,5 @@ main = execParser opts >>= main'
 main' :: Arguments -> IO ()
 main' (Arguments input mode' _) = do
   let _mode'' = fromMaybe (error "Invalid mode specified") (strToOutputMode mode')
-  inputLines <- parseFromFile specLines input
-  case inputLines of
-   Just lines' -> print lines'
-   Nothing     -> error "Invalid file format given."
+  inputLines <- fromSpecFile input
+  print inputLines
