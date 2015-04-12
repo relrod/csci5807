@@ -13,6 +13,7 @@ module ProjectOne.NFA (
   NFA (..)
 , Edge (..)
 , CharOrClass (..)
+, isCharName
 , fromRegex
 , limit
 , singleMove
@@ -46,6 +47,10 @@ data CharOrClass = CharName Char
 instance Show CharOrClass where
   show (CharName c) = [c]
   show (ClassName c) = "[" ++ c ++ "]"
+
+isCharName :: CharOrClass -> Bool
+isCharName (CharName _) = True
+isCharName _            = False
 
 alterEdge :: Int -> Edge Int -> Edge Int
 alterEdge n (Edge x c y) = Edge (n + x) c (n + y)
@@ -112,15 +117,15 @@ limit f n =
 
 -- | Given an 'NFA', a character, and a set, follow a single edge and get the
 -- set of available edges after that point.
-singleMove :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
+singleMove :: Ord a => NFA a -> CharOrClass -> S.Set a -> S.Set a
 singleMove (NFA _ e _ _) c s' =
   S.fromList [z | t <- S.toList s',
-                       Edge x (CharName y) z <- S.toList e,
+                       Edge x y z <- S.toList e,
                        x == t,
                        c == y]
 {-# INLINE singleMove #-}
 
-singleTransition :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
+singleTransition :: Ord a => NFA a -> CharOrClass -> S.Set a -> S.Set a
 singleTransition m c = epsilonClosure m . singleMove m c
 
 -- | Given an 'NFA' and a set of states, determine the ε-closure of the set.
@@ -132,6 +137,6 @@ epsilonClosure (NFA _ e _ _) = limit h
                                                    y == x]
 {-# INLINE epsilonClosure #-}
 
-alphabet :: NFA a -> String
-alphabet (NFA _ e _ _) = [ c | Edge _ (CharName c) _ <- S.toList e ]
+alphabet :: NFA a -> [CharOrClass]
+alphabet (NFA _ e _ _) = [ c | Edge _ c _ <- S.toList e ]
 {-# INLINE alphabet #-}
