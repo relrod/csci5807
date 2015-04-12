@@ -22,10 +22,13 @@ module ProjectOne.Extraction.CPlusPlus (
 , outputEdges
 ) where
 
+import Data.Maybe (catMaybes)
 import qualified Data.Set as S
 import Data.Time
 import ProjectOne.DFA
 import ProjectOne.NFA
+import ProjectOne.Utility
+import ProjectOne.Input.SpecLineParser
 
 preamble :: Bool -- ^ True if this is a header file, false if not
          -> UTCTime -- ^ Used for the "Generated: " line
@@ -70,22 +73,19 @@ classDef =
 
 -- Actual output --
 
--- | Output the edge table for a 'DFA'.
-outputEdges :: DFA Int -> String
-outputEdges dfa =
-  unlines . S.toList $ S.map f e
-  where
-    NFA _ e _ _ = getNFA dfa
-    f (Edge a ch b) =
-      "edge[" ++ show a ++ "][" ++ show ch ++ "] = " ++ show b ++ ";"
-    f (Epsilon a b) = "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"
+cocToString :: CharOrClass -> [SpecLine] -> Maybe String
+cocToString (ClassName s) ss = classNameToCharset s ss
+cocToString (CharName c)  _  = Just [c]
 
--- | Output the list of accepting states for a 'DFA'.
-outputAcceptingStates :: DFA Int -> String
-outputAcceptingStates dfa =
-  unlines . S.toList $ S.map f e
+-- | Output the edge table for a 'DFA'.
+outputEdges :: DFA Int -> [SpecLine] -> String
+outputEdges dfa ss =
+  unlines . catMaybes . S.toList $ S.map f e
   where
     NFA _ e _ _ = getNFA dfa
-    f (Edge a ch b) =
-      "edge[" ++ show a ++ "][" ++ show ch ++ "] = " ++ show b ++ ";"
-    f (Epsilon a b) = "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"
+    f (Edge a ch b) = do
+      ch' <- cocToString ch ss
+      let edgeLines =
+            map (\x -> "edge[" ++ show a ++ "][" ++ show x ++ "] = " ++ show b ++ ";") ch'
+      return . unlines $ edgeLines
+    f (Epsilon a b) = return $ "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"

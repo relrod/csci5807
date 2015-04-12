@@ -10,6 +10,7 @@
 -- Functions which tie together the other bits of logic.
 ----------------------------------------------------------------------------
 module ProjectOne.Utility (
+  classNameToCharset
 ) where
 
 import Data.Maybe (listToMaybe)
