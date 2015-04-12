@@ -13,7 +13,6 @@ module ProjectOne.NFA (
   NFA (..)
 , Edge (..)
 , CharOrClass (..)
-, isCharName
 , fromRegex
 , limit
 , singleMove
@@ -47,10 +46,6 @@ data CharOrClass = CharName Char
 instance Show CharOrClass where
   show (CharName c) = [c]
   show (ClassName c) = "[" ++ c ++ "]"
-
-isCharName :: CharOrClass -> Bool
-isCharName (CharName _) = True
-isCharName _            = False
 
 alterEdge :: Int -> Edge Int -> Edge Int
 alterEdge n (Edge x c y) = Edge (n + x) c (n + y)
