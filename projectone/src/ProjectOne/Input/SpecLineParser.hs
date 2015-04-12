@@ -29,7 +29,7 @@ import Text.Parser.Combinators
 import Text.Trifecta
 
 data SpecLine = Class { className :: String
-                      , classSet  :: RegexRule
+                      , classSet  :: String
                       }
               | Token { tokenName  :: String
                       , tokenRegex :: RegexRule
@@ -62,7 +62,7 @@ parseSpecLine = do
       identifier <- manyTill anyChar (try (some space))
       _ <- char '['
       classMembers <- manyTill (choice [try charRange, return <$> anyChar]) (try (char ']'))
-      return $ Class identifier (foldr (Or . Literal) Epsilon (join classMembers))
+      return $ Class identifier (join classMembers)
 
     tokenDecl = do
       _ <- string "token"
