@@ -12,6 +12,7 @@
 module ProjectOne.NFA (
   NFA (..)
 , Edge (..)
+, CharOrClass (..)
 , fromRegex
 , limit
 , singleMove
@@ -34,9 +35,17 @@ data NFA a = NFA { states    :: S.Set a
 -- character or ε (the empty string). Right now we are using the literal 'Char'
 -- type that Haskell gives us. In reality, we should probably generalize this
 -- more, but that isn't necessary to complete the assignment.
-data Edge a = Edge a String a
+data Edge a = Edge a CharOrClass a
             | Epsilon a a
             deriving (Eq, Ord, Show)
+
+data CharOrClass = CharName Char
+                 | ClassName String
+                 deriving (Eq, Ord)
+
+instance Show CharOrClass where
+  show (CharName c) = [c]
+  show (ClassName c) = "[" ++ c ++ "]"
 
 alterEdge :: Int -> Edge Int -> Edge Int
 alterEdge n (Edge x c y) = Edge (n + x) c (n + y)
@@ -46,12 +55,12 @@ alterEdge n (Epsilon x y) = Epsilon (n + x) (n + y)
 fromRegex :: R.RegexRule -> NFA Int
 fromRegex (R.Literal c) = NFA
                           (S.fromList [0, 1])
-                          (S.singleton $ Edge 0 [c] 1)
+                          (S.singleton $ Edge 0 (CharName c) 1)
                           0
                           (S.singleton 1)
 fromRegex (R.Class c) = NFA
                           (S.fromList [0, 1])
-                          (S.singleton $ Edge 0 c 1)
+                          (S.singleton $ Edge 0 (ClassName c) 1)
                           0
                           (S.singleton 1)
 fromRegex R.Epsilon = NFA
@@ -106,9 +115,9 @@ limit f n =
 singleMove :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
 singleMove (NFA _ e _ _) c s' =
   S.fromList [z | t <- S.toList s',
-                       Edge x y z <- S.toList e,
+                       Edge x (CharName y) z <- S.toList e,
                        x == t,
-                       [c] == y]
+                       c == y]
 {-# INLINE singleMove #-}
 
 singleTransition :: Ord a => NFA a -> Char -> S.Set a -> S.Set a
@@ -124,5 +133,5 @@ epsilonClosure (NFA _ e _ _) = limit h
 {-# INLINE epsilonClosure #-}
 
 alphabet :: NFA a -> String
-alphabet (NFA _ e _ _) = [ c | Edge _ [c] _ <- S.toList e ]
+alphabet (NFA _ e _ _) = [ c | Edge _ (CharName c) _ <- S.toList e ]
 {-# INLINE alphabet #-}
