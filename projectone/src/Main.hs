@@ -23,33 +23,41 @@ import Text.Trifecta hiding (Parser)
 
 import ProjectOne.Input.SpecLineParser
 
-data OutputMode = CPlusPlus | TextTable | Graphviz deriving (Eq, Show, Ord)
-
-data Arguments = Arguments {
-    inputFile :: String
-  , mode :: String
-  , nfa :: Bool
+data OutputMode =
+  Graphviz {
+      inputFile :: String
+    , nfa :: Bool
+  }
+  | Text {
+      inputFile :: String
+    , nfa :: Bool
+  }
+  | CPlusPlus {
+      inputFile :: String
+    , nfa :: Bool
   } deriving (Eq, Show, Ord)
 
-strToOutputMode :: String -> Maybe OutputMode
-strToOutputMode "cplusplus" = Just CPlusPlus
-strToOutputMode "text"      = Just TextTable
-strToOutputMode "graphviz"  = Just Graphviz
-strToOutputMode _           = Nothing
-
-args :: Parser Arguments
-args = Arguments
+subArgs :: (String -> Bool -> OutputMode) -> Parser OutputMode
+subArgs f = f
   <$> strArgument
       ( metavar "RULESFILE"
      <> help "Regex rules file" )
-  <*> strOption
-      ( metavar "OUTPUTFORMAT"
-     <> help "Output format (cplusplus, text, graphviz)"
-     <> value "text" )
   <*> switch
       ( long "nfa"
      <> short 'n'
      <> help "Use an NFA instead of a DFA" )
+
+args :: Parser OutputMode
+args = subparser
+        (command "graphviz"
+         (info (subArgs Graphviz)
+          (progDesc "Output graphviz graphs of state transitions"))
+      <> command "text"
+         (info (subArgs Text)
+          (progDesc "Output text representations of state transitions"))
+      <> command "cplusplus"
+         (info (subArgs CPlusPlus)
+          (progDesc "Output C++ code based on the input specification")))
 
 main :: IO ()
 main = execParser opts >>= main'
@@ -59,8 +67,14 @@ main = execParser opts >>= main'
      <> progDesc "Generate an NFA or DFA for a given input file"
      <> header "projectone - an implementation of CSCI 5807 project one" )
 
-main' :: Arguments -> IO ()
-main' (Arguments input mode' _) = do
-  let _mode'' = fromMaybe (error "Invalid mode specified") (strToOutputMode mode')
-  inputLines <- fromSpecFile input
-  print inputLines
+main' :: OutputMode -> IO ()
+main' om = do
+  case om of
+   Graphviz i n -> do
+     error "You've selected graphviz output!"
+   Text i n -> do
+     error "You've selected text output!"
+   CPlusPlus i n -> do
+     error "You've selected C++ output!"
+  --inputLines <- fromSpecFile input
+  --print inputLines
