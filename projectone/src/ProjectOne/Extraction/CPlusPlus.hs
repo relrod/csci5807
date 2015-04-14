@@ -25,6 +25,7 @@ module ProjectOne.Extraction.CPlusPlus (
 import Data.Maybe (catMaybes)
 import qualified Data.Set as S
 import Data.Time
+import Data.Time.Clock
 import ProjectOne.DFA
 import ProjectOne.NFA
 import ProjectOne.Utility
@@ -89,3 +90,12 @@ outputEdges dfa ss =
             map (\x -> "edge[" ++ show a ++ "][" ++ show x ++ "] = " ++ show b ++ ";") ch'
       return . unlines $ edgeLines
     f (Epsilon a b) = return $ "epsilon[" ++ show a ++ "] = " ++ show b ++ ";"
+
+-- | A function that makes use of the above utility functions and puts
+-- everything together.
+outputCPlusPlus :: DFA Int -> [SpecLine] -> IO ()
+outputCPlusPlus dfa sls = do
+  time <- getCurrentTime
+  putStrLn $ preamble False time
+  putStrLn $ outputEdges dfa sls
+  putStrLn $ postamble False
